@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Cronos\Ticket\CronosTicketController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Models\Cronos\CronosTicket;
 use Inertia\Inertia;
 
 /*
@@ -32,4 +34,11 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+
+    Route::get('/json/cronos/tickets', function () {
+        return CronosTicket::with('user', 'customer', 'category', 'subcategory')->limit(10)->get();
+    })->name('json.cronos');
+    Route::get('/cronos/tickets/', [CronosTicketController::class, 'index'])->name('cronos');
+
 });

@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Models\Ticket;
+namespace App\Models\Cronos;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TicketSubcategory extends Model
+class CronosUser extends Model
 {
     use HasFactory;
 
     protected $connection = 'mysql_cronos';
+    protected $table = 'users';
 
     public function tickets()
     {
-        return $this->hasMany(Ticket::class, 'subcategory_id', 'subcategory_id');
+        return $this->hasMany(CronosTicket::class, 'technician_id', 'user_id');
     }
 }
