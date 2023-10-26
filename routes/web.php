@@ -36,6 +36,11 @@ Route::middleware([
     })->name('dashboard');
 
 
+    // Customers
+    Route::get('/customers', [App\Http\Controllers\Customers\CustomerController::class, 'index'])->name('customers');
+
+    // Cronos
+    // Ticket
     Route::get('/json/cronos/tickets', function () {
         return CronosTicket::with('user', 'customer', 'category', 'subcategory')->limit(10)->get();
     })->name('json.cronos');
