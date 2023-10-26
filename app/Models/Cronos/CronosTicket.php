@@ -58,9 +58,9 @@ class CronosTicket extends Model
     }
 
     /** Methods */
-    public static function GetLatestTikets()
+    public static function GetLatestTikets($limit = 15)
     {
-        return self::with('customer', 'user', 'category', 'subcategory')->orderBy('created_at', 'desc')->take(15)->get();
+        return self::with('customer', 'user', 'category', 'subcategory')->orderBy('created_at', 'desc')->paginate();
     }
 
     /** Mutators */
@@ -71,5 +71,40 @@ class CronosTicket extends Model
     public function getCreatedAtStringAttribute()
     {
         return $this->created_at->locale('es')->isoFormat('dddd, DD [de] MMMM [de] YYYY');
+    }
+
+    /**
+     * Get tickets scoped
+     */
+
+    public function scopeGetTickets($filters)
+    {
+        return ;
+    }
+    /**
+     * Apply filters to the query.
+     */
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['status'] ?? false, fn ($query, $status) =>
+        $query->where('status', $status));
+
+        $query->when($filters['search'] ?? false, fn ($query, $search) =>
+        $query->where('msj_customer', 'like', '%' . $search . '%')
+            ->orWhere('end_user', 'like', '%' . $search . '%'));
+
+        $query->when($filters['category'] ?? false, fn ($query, $category) =>
+        $query->where('category_id', $category));
+
+        $query->when($filters['subcategory'] ?? false, fn ($query, $subcategory) =>
+        $query->where('subcategory_id', $subcategory));
+
+        $query->when($filters['technician'] ?? false, fn ($query, $technician) =>
+        $query->where('technician_id', $technician));
+
+        $query->when(($filters['customer'] || $filters['requst_of']) ?? false, fn ($query, $customer) => 
+        $query->where('customer_id', $customer)
+            ->orWhere('request_of', $customer));
+
     }
 }
